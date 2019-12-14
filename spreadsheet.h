@@ -4,8 +4,9 @@
 #include <QMap>
 #include <QString>
 #include <QPair>
+#include "exprparser.h"
 
-class SpreadSheet
+class SpreadSheet : private ExprParser
 {
 public:
     SpreadSheet();

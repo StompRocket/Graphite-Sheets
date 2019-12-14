@@ -30,7 +30,16 @@ QString SpreadSheet::evalAt(int x, int y)
     QString value = getAt(x, y);
     if (value.startsWith("="))
     {
-        QString to_parse = value.remove(0, 1);
+        value.remove(0, 1);
+        setSourceString(value);
+        try
+        {
+            return QString::number(expr());
+        }
+        catch (ParsingError &)
+        {
+            return "#ERR";
+        }
     }
     else return value;
 }

@@ -112,5 +112,5 @@ void MainWindow::on_mainTable_cellClicked(int row, int column)
 
 void MainWindow::on_mainTable_cellDoubleClicked(int, int)
 {
-    ui->formulaEdit->focusWidget();
+    ui->formulaEdit->setFocus(Qt::FocusReason::ShortcutFocusReason);
 }
