@@ -8,7 +8,12 @@ class ParsingError : public std::exception
 {};
 
 class DefinitionError : public std::exception
-{};
+{
+public:
+    DefinitionError(QString message) : message(message) {}
+
+    QString message;
+};
 
 class ExprParser
 {

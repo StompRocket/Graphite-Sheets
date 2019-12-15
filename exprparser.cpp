@@ -53,6 +53,8 @@ double ExprParser::var()
         buf.append(get());
     }
 
+    qDebug() << "var" << buf;
+
     // try for a function
     if (peek() == '(')
     {

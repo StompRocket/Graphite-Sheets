@@ -13,7 +13,14 @@ public:
     QString message;
 };
 
-class SpreadSheet : private ExprParser
+class RecursionError : public std::exception
+{
+public:
+    RecursionError(QString message) : message(message) {}
+    QString message;
+};
+
+class SpreadSheet
 {
 public:
     SpreadSheet();
@@ -21,10 +28,19 @@ public:
     void setAt(int, int, QString);
     bool contains(int, int);
     QString evalAt(int, int);
-
+    QList<QPair<int, int>> refStack;
     QMap<QPair<int, int>, QString> cellData;
 private:
     QMap<QPair<int, int>, double> cellCache;
+};
+
+class SheetEval : public ExprParser
+{
+public:
+    SheetEval(SpreadSheet *sheet) : sheet(sheet) {}
+
+private:
+    SpreadSheet *sheet;
     double getVar(QString) override;
     double getFunc(QString named, QList<double> args) override;
 };
