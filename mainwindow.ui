@@ -113,6 +113,11 @@
     <string>Ctrl+S</string>
    </property>
   </action>
+  <action name="actionSin">
+   <property name="text">
+    <string>Sin</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

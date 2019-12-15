@@ -66,8 +66,8 @@ double ExprParser::var()
             get();
             args.append(expr());
         }
-        if (get() != ')')
-            throw ParsingError{};
+
+        qDebug() << "Getting func" << buf;
 
         return getFunc(buf, args);
     }
@@ -117,7 +117,7 @@ double ExprParser::expr()
     double res = term();
 
     while (peek() == '+' || peek() == '-')
-        if (get () == '+')
+        if (get() == '+')
             res += term();
         else
             res -= term();
