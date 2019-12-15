@@ -2,6 +2,8 @@
 
 Simple, native spreadsheet application for Mac, Windows, and Linux.
 
+![Linux Screenshot](screenshot.png)
+
 ## Building
 
 - Install Qt5
