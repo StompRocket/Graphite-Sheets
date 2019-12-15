@@ -1,0 +1,22 @@
+{
+    "app-id": "io.stomprocket.Graphite-Sheets",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "5.13",
+    "sdk": "org.kde.Sdk",
+    "command": "graphite-sheets",
+    "modules": [
+        {
+            "name": "graphite-sheets",
+            "buildsystem": "simple",
+            "build-commands": [
+                "install -D graphite-sheets /app/bin/graphite-sheets"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "graphite-sheets"
+                }
+            ]
+        }
+    ]
+}

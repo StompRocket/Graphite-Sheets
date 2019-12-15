@@ -17,8 +17,8 @@ MainWindow::MainWindow(QWidget *parent)
     central->setLayout(ui->verticalLayout);
     this->setCentralWidget(central);
 
-    rowCount = 20;
-    colCount = 6;
+    rowCount = 64;
+    colCount = 16;
 
     setupTable();
 
@@ -35,6 +35,13 @@ void MainWindow::setupTable()
 {
     ui->mainTable->setRowCount(rowCount);
     ui->mainTable->setColumnCount(colCount);
+    QStringList columnHeaders;
+
+    for (int i = 0; i < colCount; i++)
+    {
+        columnHeaders.append(QString('A' + i));
+    }
+    ui->mainTable->setHorizontalHeaderLabels(columnHeaders);
 
     for (int i = 0; i < rowCount; i++)
     {
@@ -179,6 +186,7 @@ void MainWindow::saveFile()
     out.open(QIODevice::WriteOnly);
     QDataStream s(&out);
     s << sheet;
+    ui->statusbar->showMessage("Saved to " + filePath, 5 * 1000);
 }
 
 void MainWindow::on_actionSave_triggered()
