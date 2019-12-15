@@ -1,11 +1,19 @@
 #include <QVariant>
 #include <QtMath>
 #include <QDebug>
+#include <QDataStream>
 #include "spreadsheet.h"
 
 SpreadSheet::SpreadSheet()
 {
     cellData[QPair<int,int>(2,3)] = "Hello";
+    basicStyle = new CellStyle{false};
+    cellStyles[QPair<int,int>(2,3)] = CellStyle{true};
+}
+
+SpreadSheet::~SpreadSheet()
+{
+    delete basicStyle;
 }
 
 QString SpreadSheet::getAt(int x, int y)
@@ -86,6 +94,21 @@ double SheetEval::getFunc(QString named, QList<double> args)
     else throw DefinitionError{named};
 }
 
+CellStyle CellStyle::basic()
+{
+    return CellStyle
+    {
+        false,
+        false,
+    };
+}
+
+CellStyle *SpreadSheet::getStyle(int row, int col)
+{
+    QPair<int,int> p(row, col);
+    return &cellStyles[p];
+}
+
 QString SpreadSheet::evalAt(int x, int y)
 {
     QString value = getAt(x, y);
@@ -117,4 +140,27 @@ QString SpreadSheet::evalAt(int x, int y)
         }
     }
     else return value;
+}
+
+QDataStream &operator<<(QDataStream &out, const SpreadSheet &in)
+{
+    out << in.cellData << in.cellStyles;
+
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, SpreadSheet &out)
+{
+    in >> out.cellData >> out.cellStyles;
+
+    return in;
+}
+
+QDataStream &operator<<(QDataStream &out, const CellStyle &in)
+{
+    out << in.bold << in.italic;
+}
+QDataStream &operator>>(QDataStream &in, CellStyle &out)
+{
+    in >> out.bold >> out.italic;
 }

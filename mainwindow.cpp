@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include <QDebug>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -58,17 +59,21 @@ void MainWindow::on_mainTable_cellEntered(int, int)
 
 void MainWindow::on_mainTable_itemSelectionChanged()
 {
+    bool enableControls = false;
     if (ui->mainTable->selectedItems().length() == 1)
     {
         currentRow = ui->mainTable->currentRow();
         currentCol = ui->mainTable->currentColumn();
-        ui->formulaEdit->setEnabled(true);
+
+        enableControls = true;
     }
     else
     {
-        ui->formulaEdit->setEnabled(false);
         ui->formulaEdit->setText("");
     }
+    ui->formulaEdit->setEnabled(enableControls);
+    ui->actionBold->setEnabled(enableControls);
+    ui->actionItalics->setEnabled(enableControls);
 }
 
 void MainWindow::on_mainTable_currentCellChanged(int newRow, int newCol, int, int)
@@ -77,6 +82,9 @@ void MainWindow::on_mainTable_currentCellChanged(int newRow, int newCol, int, in
     currentCol = newCol;
     qDebug() << newRow << newCol;
     ui->formulaEdit->setText(sheet.getAt(currentRow, currentCol));
+    auto *style = sheet.getStyle(currentRow, currentCol);
+    ui->actionBold->setChecked(style->bold);
+    ui->actionItalics->setChecked(style->italic);
 }
 
 void MainWindow::on_formulaEdit_textChanged(const QString &)
@@ -97,6 +105,11 @@ void MainWindow::renderCells()
     {
         const auto [row, col] = i.key();
         QTableWidgetItem *item = new QTableWidgetItem{};
+        CellStyle *style = sheet.getStyle(row, col);
+        QFont font;
+        font.setBold(style->bold);
+        font.setItalic(style->italic);
+        item->setFont(font);
         try
         {
             item->setText(sheet.evalAt(row, col));
@@ -123,4 +136,59 @@ void MainWindow::on_mainTable_cellClicked(int row, int column)
 void MainWindow::on_mainTable_cellDoubleClicked(int, int)
 {
     ui->formulaEdit->setFocus(Qt::FocusReason::ShortcutFocusReason);
+}
+
+void MainWindow::on_actionBold_triggered(bool checked)
+{
+    sheet.getStyle(currentRow, currentCol)->bold = checked;
+    renderCells();
+}
+
+void MainWindow::on_actionItalics_triggered(bool checked)
+{
+    sheet.getStyle(currentRow, currentCol)->italic = checked;
+    renderCells();
+}
+
+void MainWindow::on_actionOpen_triggered()
+{
+    QFileDialog dlg{this};
+    dlg.setNameFilter("Graphite Sheets (*.gs)");
+    dlg.setFileMode(QFileDialog::ExistingFile);
+    if (dlg.exec())
+    {
+        filePath = dlg.selectedFiles().first();
+    }
+
+    openFile();
+}
+
+void MainWindow::openFile()
+{
+    QFile f(filePath);
+    f.open(QIODevice::ReadOnly);
+    QDataStream s(&f);
+    s >> sheet;
+    renderCells();
+}
+
+void MainWindow::saveFile()
+{
+    QFile out(filePath);
+    out.open(QIODevice::WriteOnly);
+    QDataStream s(&out);
+    s << sheet;
+}
+
+void MainWindow::on_actionSave_triggered()
+{
+    if (filePath != "")
+    {
+        saveFile();
+    }
+    else
+    {
+        filePath = QFileDialog::getSaveFileName(this, "Save Sheet", ".", "Graphite Sheets (*.gs)");
+        saveFile();
+    }
 }

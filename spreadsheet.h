@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QString>
+#include <QColor>
 #include <QPair>
 #include "exprparser.h"
 
@@ -20,19 +21,36 @@ public:
     QString message;
 };
 
+struct CellStyle
+{
+    inline static CellStyle basic();
+    bool bold;
+    bool italic;
+};
+
+QDataStream &operator<<(QDataStream &out, const CellStyle &in);
+QDataStream &operator>>(QDataStream &in, CellStyle &out);
+
+typedef QPair<quint32, quint32> Coordinate;
+
 class SpreadSheet
 {
 public:
     SpreadSheet();
+    ~SpreadSheet();
     QString getAt(int, int);
     void setAt(int, int, QString);
     bool contains(int, int);
+    CellStyle *getStyle(int row, int col);
+    CellStyle *basicStyle;
     QString evalAt(int, int);
-    QList<QPair<int, int>> refStack;
-    QMap<QPair<int, int>, QString> cellData;
-private:
-    QMap<QPair<int, int>, double> cellCache;
+    QList<Coordinate> refStack;
+    QMap<Coordinate, QString> cellData;
+    QMap<Coordinate, CellStyle> cellStyles;
 };
+
+QDataStream &operator<<(QDataStream &out, const SpreadSheet &in);
+QDataStream &operator>>(QDataStream &in, SpreadSheet &out);
 
 class SheetEval : public ExprParser
 {

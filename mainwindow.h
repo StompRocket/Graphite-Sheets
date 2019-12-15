@@ -34,6 +34,14 @@ private slots:
 
     void on_mainTable_cellDoubleClicked(int row, int column);
 
+    void on_actionBold_triggered(bool checked);
+
+    void on_actionItalics_triggered(bool checked);
+
+    void on_actionOpen_triggered();
+
+    void on_actionSave_triggered();
+
 private:
     Ui::MainWindow *ui;
     int rowCount;
@@ -43,5 +51,8 @@ private:
     SpreadSheet sheet;
     void setupTable();
     void renderCells();
+    QString filePath;
+    void saveFile();
+    void openFile();
 };
 #endif // MAINWINDOW_H
