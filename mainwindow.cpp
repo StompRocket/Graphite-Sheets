@@ -96,9 +96,19 @@ void MainWindow::renderCells()
     for (auto i = sheet.cellData.constBegin(); i != sheet.cellData.constEnd(); i++)
     {
         const auto [row, col] = i.key();
-        qDebug() << row << "," << col << sheet.evalAt(row, col);
         QTableWidgetItem *item = new QTableWidgetItem{};
-        item->setText(sheet.evalAt(row, col));
+        try
+        {
+            item->setText(sheet.evalAt(row, col));
+            ui->statusbar->showMessage("");
+        }
+        catch (EvalError &err)
+        {
+            item->setText("#ERR");
+            item->setTextColor(QColor{255, 0, 0, 255});
+            ui->statusbar->showMessage(err.message);
+        }
+
         item->setFlags(item->flags() ^ Qt::ItemIsEditable);
         ui->mainTable->setItem(row, col, item);
     }

@@ -7,6 +7,9 @@
 class ParsingError : public std::exception
 {};
 
+class DefinitionError : public std::exception
+{};
+
 class ExprParser
 {
 public:
@@ -22,11 +25,14 @@ private:
     double number();
     double factor();
     double term();
+    double var();
     bool isNum();
+    bool isAlpha();
 
 protected:
     // Override this in a subclass to define your own variables
-    double getVar(QString named);
+    virtual double getVar(QString named) = 0;
+    virtual double getFunc(QString named, QList<double> args) = 0;
 };
 
 #endif // EXPRPARSER_H
