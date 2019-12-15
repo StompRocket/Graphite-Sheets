@@ -7,13 +7,7 @@
 SpreadSheet::SpreadSheet()
 {
     cellData[QPair<int,int>(2,3)] = "Hello";
-    basicStyle = new CellStyle{false};
-    cellStyles[QPair<int,int>(2,3)] = CellStyle{true};
-}
-
-SpreadSheet::~SpreadSheet()
-{
-    delete basicStyle;
+    cellStyles[QPair<int,int>(2,3)] = CellStyle{true, false};
 }
 
 QString SpreadSheet::getAt(int x, int y)
@@ -35,12 +29,18 @@ void SpreadSheet::setAt(int x, int y, QString val)
     cellData[QPair<int,int>(x,y)] = val;
 }
 
+void SpreadSheet::clearReferences()
+{
+    refStack.clear();
+}
+
 double SheetEval::getVar(QString named)
 {
     if (named == "pi")
         return 3.141592;
     else if (named.length() >= 2 && named[0].isUpper() && named[1].isNumber())
     {
+        qDebug() << sheet->refStack;
         bool ok = true;
         int col = named[0].unicode() - 'A';
         named.remove(0, 1);

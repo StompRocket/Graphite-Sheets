@@ -37,12 +37,11 @@ class SpreadSheet
 {
 public:
     SpreadSheet();
-    ~SpreadSheet();
     QString getAt(int, int);
     void setAt(int, int, QString);
+    void clearReferences();
     bool contains(int, int);
     CellStyle *getStyle(int row, int col);
-    CellStyle *basicStyle;
     QString evalAt(int, int);
     QList<Coordinate> refStack;
     QMap<Coordinate, QString> cellData;

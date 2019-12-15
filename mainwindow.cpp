@@ -113,6 +113,7 @@ void MainWindow::renderCells()
         try
         {
             item->setText(sheet.evalAt(row, col));
+            sheet.clearReferences();
             ui->statusbar->showMessage("");
         }
         catch (EvalError &err)
